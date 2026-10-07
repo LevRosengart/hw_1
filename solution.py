@@ -52,6 +52,7 @@ class Solution:
             sock.sendall(task_request.make_request())
             response: bytes = Solution.get_response(sock)
             response_text = response.decode("utf-8")
+            print(response_text)
             if "секретный ключ" in response_text.lower():
                 soup = BeautifulSoup(response_text, "html.parser")
                 print(soup.find("code").text)
@@ -71,4 +72,4 @@ class Solution:
             for key, value in task.files.items():
                 task_request.add_file(key, value)
 
-            time.sleep(0.001)
+            time.sleep(0.1)

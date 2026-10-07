@@ -40,7 +40,13 @@ class TaskParser:
 
         tables = soup.find_all("table")
         for table in tables:
-            prev_text = table.previous.text.strip()
+            prev_text = ""
+            curr = table.previous_element
+            while curr:
+                if isinstance(curr, str) and curr.strip():
+                    prev_text = curr.lower().strip()
+                    break
+                curr = curr.previous_element
             table_data = {}
             for row in table.find_all("tr"):
                 cols = row.find_all(["td", "th"])
