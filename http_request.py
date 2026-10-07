@@ -65,9 +65,7 @@ class HttpRequest:
         cl_key = self.get_normalized_key("content-length")
         self._headers[cl_key] = str(len(self._body))
 
-    def add_file(
-        self, filename: str, content: str | bytes, field_name: str | None = None
-    ) -> None:
+    def add_file(self, filename: str, content: str) -> None:
         content_type_key = self.get_normalized_key("content-type")
         if content_type_key not in self._headers:
             self.add_raw_header(
@@ -75,10 +73,7 @@ class HttpRequest:
                 value=f"multipart/form-data; boundary={self.BOUNDARY}",
             )
 
-        if field_name is None:
-            field_name = filename
-
-        content_bytes = content.encode("utf-8") if isinstance(content, str) else content
+        content_bytes = content.encode("utf-8")
 
         closing_boundary = f"--{self.BOUNDARY}--\r\n".encode("utf-8")
         if self._body.endswith(closing_boundary):
@@ -86,7 +81,7 @@ class HttpRequest:
         file_part = (
             (
                 f"--{self.BOUNDARY}\r\n"
-                f'Content-Disposition: form-data; name="{field_name}"; filename="{filename}"\r\n'
+                f'Content-Disposition: form-data; name="{filename}"; filename="{filename}"\r\n'
                 f"Content-Type: application/octet-stream\r\n\r\n"
             ).encode("utf-8")
             + content_bytes
