@@ -1,6 +1,6 @@
 import socket
 import time
-import http_request
+import requests
 
 from bs4 import BeautifulSoup
 
@@ -11,6 +11,7 @@ from task_parser import TaskParser
 
 class Solution:
     HOST: str = "hw1.alexbers.com"
+    URL: str = f"http://{HOST}"
     PORT: int = 80
 
     @staticmethod
@@ -66,6 +67,7 @@ class Solution:
 
             for header, value in task.headers.items():
                 task_request.add_raw_header(header, value)
+
             for cookie, value in task.cookies.items():
                 task_request.add_cookie(key=cookie, value=value)
             for param, value in task.params.items():
@@ -76,3 +78,35 @@ class Solution:
                 task_request.add_file(key, value)
 
             time.sleep(0.1)
+
+    @staticmethod
+    def solve_requests() -> None:
+        session: requests.Session = requests.Session()
+        session.cookies.set("user", "fe3f83547d0f3cd0d7ee11b2a325ed66")
+        response: requests.Response = session.get(Solution.make_url("/"))
+        count_responses = 0
+        while True:
+            count_responses += 1
+            print(f"Шагов сделано {count_responses}")
+            if "секретный ключ" in (content := response.content.decode("utf-8").lower()):
+                soup = BeautifulSoup(content, "html.parser")
+                print(soup.find("code").text)
+                break
+
+            task = TaskParser().parse(response.content.decode("utf-8"))
+            response = session.request(
+                method=task.method.value,
+                url=Solution.make_url(task.path),
+                params=task.params,
+                data=task.data,
+                files={k: (k, v) for k, v in task.files.items()},
+                headers=task.headers
+            )
+
+            time.sleep(0.05)
+
+    @staticmethod
+    def make_url(path: str) -> str:
+        if not path.startswith("/"):
+            path = "/" + path
+        return f"{Solution.URL}{path}"
