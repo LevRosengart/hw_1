@@ -1,5 +1,6 @@
 import socket
 import time
+import http_request
 
 from bs4 import BeautifulSoup
 
@@ -60,16 +61,14 @@ class Solution:
 
             task = TaskParser().parse(response_text)
             task_request = HttpRequest(Solution.HOST, task.path, task.method)
-
-            for header, value in task.headers.items():
-                task_request.add_raw_header(header, value)
-            for cookie, value in task.cookies.items():
-                task_request.add_cookie(key=cookie, value=value)
-            for param, value in task.params.items():
-                task_request.add_param(param, value)
-            for key, value in task.data.items():
-                task_request.add_form_data(key, value)
-            for key, value in task.files.items():
-                task_request.add_file(key, value)
-
-            time.sleep(0.1)
+            #
+            # for header, value in task.headers.items():
+            #     task_request.add_raw_header(header, value)
+            # for cookie, value in task.cookies.items():
+            #     task_request.add_cookie(key=cookie, value=value)
+            # for param, value in task.params.items():
+            #     task_request.add_param(param, value)
+            # for key, value in task.data.items():
+            #     task_request.add_form_data(key, value)
+            # for key, value in task.files.items():
+            #     task_request.add_file(key, value)
