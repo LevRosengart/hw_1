@@ -55,7 +55,8 @@ class TaskParser:
                     val = cols[1].text.strip()
                     table_data[key] = val
 
-            if "файл" in prev_text:
+            th_text = " ".join([th.text.strip().lower() for th in table.find_all("th")])
+            if "файл" in prev_text or "файл" in th_text:
                 result.files = table_data
             if "параметр" in prev_text:
                 result.params = table_data

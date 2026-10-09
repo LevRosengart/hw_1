@@ -49,11 +49,13 @@ class Solution:
         sock: socket.socket = socket.create_connection(
             (Solution.HOST, Solution.PORT), timeout=20
         )
+        count_responses = 0
         while True:
             sock.sendall(task_request.make_request())
             response: bytes = Solution.get_response(sock)
             response_text = response.decode("utf-8")
-            print(response_text)
+            count_responses += 1
+            print(f"Шагов сделано {count_responses}")
             if "секретный ключ" in response_text.lower():
                 soup = BeautifulSoup(response_text, "html.parser")
                 print(soup.find("code").text)
@@ -72,3 +74,5 @@ class Solution:
                 task_request.add_form_data(key, value)
             for key, value in task.files.items():
                 task_request.add_file(key, value)
+
+            time.sleep(0.1)
