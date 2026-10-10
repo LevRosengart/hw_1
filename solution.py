@@ -99,8 +99,9 @@ class Solution:
                 url=Solution.make_url(task.path),
                 params=task.params,
                 data=task.data,
-                files={k: (k, v) for k, v in task.files.items()},
-                headers=task.headers
+                files={k: (k, v) for k, v in task.files.items()} if task.files else None,
+                headers=task.headers,
+                cookies=task.cookies
             )
 
             time.sleep(0.05)
